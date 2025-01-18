@@ -1,25 +1,15 @@
-import mysql from 'mysql2/promise';
-import dotenv from 'dotenv';
-
-dotenv.config();
+import { execQuery } from '../database.js';
 
 export default class UserRepository {
-    constructor() {
-        this.connection = mysql.createPool({
-            host: process.env.DB_HOST,
-            user: process.env.DB_USER,
-            password: process.env.DB_PASSWORD,
-            database: process.env.DB_NAME,
-            waitForConnections: true,
-            connectionLimit: 10,
-            queueLimit: 0
-        });
-    }
-
     async get(username) {
         try {
-            const [rows] = await this.connection.execute('SELECT * FROM `users` WHERE `username` = ?', [username]);
-            return rows[0];
+            const sql = 'SELECT * FROM users WHERE username = ?';
+            const params = [username];
+            const result = await execQuery(sql, params);
+            if (result.length === 0) {
+                return null;
+            }
+            return result;
         } catch (error) {
             console.error('Error fetching user:', error);
             throw error;
@@ -30,7 +20,9 @@ export default class UserRepository {
         try {
             const user = await this.get(username);
             if (!user) {
-                await this.connection.execute('INSERT INTO `users` (`username`, `fullName`, `password`) VALUES (?, ?, ?)', [username, fullName, password]);
+                const sql = 'INSERT INTO users (username, fullName, password) VALUES (?, ?, ?)';
+                const params = [username, fullName, password];
+                await execQuery(sql, params);
                 return true;
             } else {
                 return false;

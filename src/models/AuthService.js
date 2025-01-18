@@ -4,7 +4,7 @@ export default class AuthService {
     static users = new UserRepository();
 
     static async signin(username, password) {
-        const user = await this.users.get(username);
+        const user = (await this.users.get(username))[0];
         return user !== undefined && user.password === password;
     }
 

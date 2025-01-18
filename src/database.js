@@ -1,69 +1,40 @@
-import { config } from 'dotenv';
-import mysql from 'mysql2/promise';
+import {config} from 'dotenv';
+import sqlite3 from 'sqlite3';
+import {open} from 'sqlite';
 
 config(); // Load environment variables
 
-export default async function initializeDatabase() {
+let db;
+
+export async function initializeDatabase() {
     let databaseInitialized = false;
 
     try {
-        const connection = await mysql.createConnection({
-            host: process.env.DB_HOST,
-            user: process.env.DB_USER,
-            password: process.env.DB_PASSWORD,
+        db = await open({
+            filename: process.env.DB_FILE,
+            driver: sqlite3.Database
         });
 
-        console.log('Connected to MySQL server.');
-
-        // Check if the database exists
-        const [databases] = await connection.query('SHOW DATABASES');
-        const dbExists = databases.some(db => db.Database === process.env.DB_NAME);
-
-        if (!dbExists) {
-            // Create the database if it doesn't exist
-            await connection.query(`CREATE DATABASE ${process.env.DB_NAME}`);
-            console.log(`Database ${process.env.DB_NAME} created.`);
-            databaseInitialized = true;
-        }
-
-        // Use the database
-        await connection.query(`USE ${process.env.DB_NAME}`);
-
-        // Check if the users table exists
-        const [tables] = await connection.query('SHOW TABLES');
-        const tableExists = tables.some(table => table[`Tables_in_${process.env.DB_NAME}`] === 'users');
-
-        if (!tableExists) {
-            // Create the users table if it doesn't exist
-            const createTableQuery = `
-                CREATE TABLE IF NOT EXISTS users (
-                                                     username VARCHAR(100) NOT NULL PRIMARY KEY,
-                                                     password VARCHAR(100) NOT NULL,
-                                                     fullName VARCHAR(300) NOT NULL
-                );
-            `;
-            await connection.query(createTableQuery);
-            console.log('Table "users" created.');
-            databaseInitialized = true;
-        }
+        // Check if the users table exists and create it if it doesn't
+        await db.exec(`
+            CREATE TABLE IF NOT EXISTS users (
+                username TEXT PRIMARY KEY,
+                password TEXT NOT NULL,
+                fullName TEXT NOT NULL
+            );
+        `);
 
         // Check if the default user already exists
-        const [rows] = await connection.query('SELECT COUNT(*) AS count FROM users WHERE username = "user"');
-        if (rows[0].count === 0) {
+        const row = await db.get('SELECT COUNT(*) AS count FROM users WHERE username = "user"');
+        if (row.count === 0) {
             // Insert the default user if it doesn't exist
-            const insertUserQuery = `
+            await db.run(`
                 INSERT INTO users (username, password, fullName)
                 VALUES ('user', 'password', 'Test user')
-                ON DUPLICATE KEY UPDATE
-                    password = VALUES(password), fullName = VALUES(fullName);
-            `;
-            await connection.query(insertUserQuery);
+            `);
             console.log('Default user inserted.');
             databaseInitialized = true;
         }
-
-        // Close the connection
-        await connection.end();
 
         // Log initialization status only if the database was initialized
         if (databaseInitialized) {
@@ -71,5 +42,18 @@ export default async function initializeDatabase() {
         }
     } catch (err) {
         console.error('Error setting up the database:', err);
+    }
+}
+
+export async function execQuery(sql, params = []) {
+    try {
+        if (sql.trim().toUpperCase().startsWith('SELECT')) {
+            return await db.all(sql, params);
+        } else {
+            return await db.run(sql, params);
+        }
+    } catch (err) {
+        console.error('Error executing query:', err);
+        throw err;
     }
 }
