@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="/styles/<%= theme %>.css">
+    <script src="https://kit.fontawesome.com/bfe42d90a4.js" crossorigin="anonymous"></script>
+    <script src="/dark-mode.js" defer></script>
+</head>
+<body>
+    <div id="dark-mode-toggle">
+        <button id="dark-mode-toggle-button">
+            <i class="fa fa-moon"></i>
+        </button>
+    </div>
+    <nav>
+    </nav>
+    <form action="/login" method="POST">
+        <div class="header">
+            <h2>Login</h2>
+        </div>
+        <% if (locals.error) { %>
+            <div class="error-message"><%= error %></div>
+        <% } %>
+        <label>
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+        </label>
+        <button type="submit">Login</button>
+        <div class="signup-link">
+            <p>Don't have an account? <br> <a href="/signup">signup here</a></p>
+        </div>
+    </form>
+</body>
+</html>

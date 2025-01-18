@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="/styles/<%= theme %>.css">
+    <script src="https://kit.fontawesome.com/bfe42d90a4.js" crossorigin="anonymous"></script>
+    <script src="/dark-mode.js" defer></script>
+</head>
+<body>
+    <div id="dark-mode-toggle">
+        <button id="dark-mode-toggle-button">
+            <i class="fa fa-moon"></i>
+        </button>
+    </div>
+    <nav>
+    </nav>
+    <form action="/signup" method="POST">
+        <div class="header">
+            <h2>Register</h2>
+        </div>
+        <% if (locals.error) { %>
+            <div class="error-message"><%= error %></div>
+        <% } %>
+        <label>
+            <input type="text" name="fullName" placeholder="Full Name" required>
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <input type="password" name="confirmPassword" placeholder="Confirm Password" required>
+        </label>
+        <button type="submit">Register</button>
+        <div class="login-link">
+            <p>Already have an account? <br> <a href="/login">Login here</a></p>
+        </div>
+    </form>
+</body>
+</html>

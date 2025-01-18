@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index</title>
+    <link rel="stylesheet" href="/styles/<%= theme %>.css">
+    <script src="https://kit.fontawesome.com/bfe42d90a4.js" crossorigin="anonymous"></script>
+    <script src="/dark-mode.js" defer></script>
+</head>
+<body>
+    <div id="dark-mode-toggle">
+        <button id="dark-mode-toggle-button">
+            <i class="fa fa-moon"></i>
+        </button>
+    </div>
+    <nav>
+        <a href="#" onclick="showHome()">Home</a>
+        <a href="#" onclick="showSettings()">Settings</a>
+        <div class="user-box" onclick="toggleDropdown()">
+            <img src="/user.png" alt="User Icon" class="user-icon">
+            <span><%= user.username %></span>
+        </div>
+        <div class="dropdown" id="userDropdown">
+            <a href="#" onclick="document.getElementById('logoutForm').submit();">Sign Out</a>
+        </div>
+    </nav>
+    <div class="header" id="header">
+        <h1>Welcome, <%= user.fullName %></h1>
+        <p class="welcome-message">We're glad to have you back!</p>
+    </div>
+    <div class="content" id="content">
+        <p>This is your dashboard where you can manage your account, view your profile, and adjust your settings. Explore the options above to get started.</p>
+    </div>
+    <form id="logoutForm" action="/logout" method="POST" style="display: none;">
+        <button type="submit" class="logout-btn">Logout</button>
+    </form>
+    <footer>
+        <p>&copy; 2024 PAI USJ. Auth System. Jorge Gainzarain.</p>
+    </footer>
+    <script>
+        function toggleDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function showSettings() {
+            const header = document.getElementById('header');
+            const content = document.getElementById('content');
+            header.innerHTML = '<h1>Settings</h1>';
+            const imgPath = '/construction.png';
+            content.innerHTML = `
+                <img src="${imgPath}" alt="Under Construction" class="construction-image">
+            `;
+        }
+
+        function showHome() {
+            const header = document.getElementById('header');
+            const content = document.getElementById('content');
+            header.innerHTML = `<h1>Welcome, <%= user.fullName %></h1><p class="welcome-message">We're glad to have you back!</p>`;
+            content.innerHTML = '<p>This is your dashboard where you can manage your account, view your profile, and adjust your settings. Explore the options above to get started.</p>';
+        }
+    </script>
+</body>
+</html>
