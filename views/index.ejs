@@ -20,6 +20,9 @@
         .user-box span {
             margin-right: 10px;
         }
+        .hidden-tab {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -36,6 +39,8 @@
             <a href="#" data-tab="create-story" onclick="showCreateStory()">Create Story</a>
             <a href="#" data-tab="settings" onclick="showSettings()">Settings</a>
         <% } %>
+        <a href="#" data-tab="profile" class="hidden-tab" onclick="showProfile()">Profile</a>
+        <a href="#" data-tab="story" class="hidden-tab" onclick="showStory()">Story</a>
         <div class="user-box" onclick="toggleDropdown()">
             <% if (user) { %>
                 <span><%= user.username %></span>
@@ -46,6 +51,7 @@
         </div>
         <div class="dropdown" id="userDropdown">
             <% if (user) { %>
+                <a href="#" onclick="showProfile(undefined)">Profile</a>
                 <a href="#" onclick="document.getElementById('logoutForm').submit();">Sign Out</a>
             <% } else { %>
                 <a href="/login">Login</a>
@@ -62,6 +68,11 @@
         function toggleDropdown() {
             const dropdown = document.getElementById('userDropdown');
             dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function hideDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.style.display = 'none';
         }
 
         function showSettings() {
@@ -87,10 +98,45 @@
             content.innerHTML = '<p>This is your dashboard where you can manage your account, view your profile, and adjust your settings. Explore the options above to get started.</p>';
         }
 
+        function showProfile(userId) {
+            localStorage.setItem('currentTab', 'profile');
+            localStorage.setItem('profileId', userId);
+            if (userId === undefined) {
+                userId = '<%= user ? user.id : '' %>';
+            }
+            if (!userId) {
+                alert('Please log in to view your profile.');
+                return;
+            }
+
+            fetch(`/user/${userId}`)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('header').innerHTML = '';
+                    document.getElementById('content').innerHTML = html;
+                    const storyItems = document.querySelectorAll('.story-item');
+                    storyItems.forEach(item => {
+                        item.addEventListener('click', () => {
+                            const storyId = item.getAttribute('data-story-id');
+                            showStory(storyId);
+                        });
+                    });
+                    hideDropdown();
+                })
+                .catch(error => {
+                    console.error('Error fetching profile:', error);
+                });
+        }
+
         async function showStory(storyId) {
-            // Store the last tab
+            // Store the last tab and current story ID
             const currentTab = localStorage.getItem('currentTab');
-            localStorage.setItem('lastTab', currentTab);
+            if (currentTab !== 'story') {
+                localStorage.setItem('lastTab', currentTab);
+            }
+            localStorage.setItem('currentStoryId', storyId);
+
+            localStorage.setItem('currentTab', 'story');
 
             fetch(`/story/${storyId}`)
                 .then(response => response.text())
@@ -103,11 +149,23 @@
                         event.preventDefault();
                         goBack();
                     });
+
+                    const profileButtons = document.querySelectorAll('.story-author');
+                    profileButtons.forEach(button => {
+                        button.addEventListener('click', (event) => {
+                            event.preventDefault();
+                            const userId = button.getAttribute('data-user-id');
+                            showProfile(userId);
+                        });
+                    });
                 });
         }
 
         function goBack() {
             const lastTab = localStorage.getItem('lastTab');
+            const currentStoryId = localStorage.getItem('currentStoryId');
+            const currProfileId = localStorage.getItem('profileId');
+
             switch (lastTab) {
                 case 'home':
                     showHome();
@@ -124,9 +182,24 @@
                 case 'settings':
                     showSettings();
                     break;
+                case 'profile':
+                    if (currProfileId) {
+                        showProfile(currProfileId);
+                    } else {
+                        showHome();
+                    }
+                    break;
+                case 'story':
+                    if (currentStoryId) {
+                        showStory(currentStoryId);
+                    } else {
+                        showHome();
+                    }
+                    break;
                 default:
                     showHome();
             }
+            localStorage.setItem('currentTab', lastTab);
         }
 
         async function showStories() {
@@ -187,6 +260,9 @@
         document.addEventListener('DOMContentLoaded', () => {
             const tabs = document.querySelectorAll('nav a[data-tab]');
             const currentTab = localStorage.getItem('currentTab') || 'home';
+            const currentStoryId = localStorage.getItem('currentStoryId');
+            const currProfileId = localStorage.getItem('profileId');
+
 
             function showTab(tabName) {
                 // Remove the active class from all tabs
@@ -209,6 +285,20 @@
                     case 'settings':
                         showSettings();
                         break;
+                    case 'profile':
+                        if (currProfileId) {
+                            showProfile(currProfileId);
+                        } else {
+                            showHome();
+                        }
+                        break;
+                    case 'story':
+                        if (currentStoryId) {
+                            showStory(currentStoryId);
+                        } else {
+                            showHome();
+                        }
+                        break;
                     default:
                         showHome();
                 }
@@ -220,6 +310,7 @@
                 }
             }
 
+
             // Render the current tab's content
             showTab(currentTab);
 
@@ -228,12 +319,19 @@
                 tab.addEventListener('click', () => {
                     const tabName = tab.getAttribute('data-tab');
                     localStorage.setItem('currentTab', tabName);
+                    localStorage.removeItem('currentStoryId'); // Clear the story ID when switching tabs
                     showTab(tabName);
                 });
             });
+
+            // Handle hidden tabs
+            const hiddenTabs = ['profile', 'story'];
+            hiddenTabs.forEach(tabName => {
+                if (currentTab === tabName) {
+                    showTab(tabName);
+                }
+            });
         });
-
-
     </script>
 </body>
 </html>

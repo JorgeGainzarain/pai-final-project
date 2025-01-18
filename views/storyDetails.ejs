@@ -12,7 +12,7 @@
     <div class="story-content-box">
         <p><%= story.content %></p>
     </div>
-    <a href="/users/<%= story.author.id %>" class="story-author">By: <%= story.author.fullName %></a>
+    <a href="#" class="story-author" data-user-id="<%= story.author.id %>">By: <%= story.author.fullName %></a>
 </div>
 </body>
 </html>

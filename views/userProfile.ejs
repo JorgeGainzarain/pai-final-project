@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+</head>
+<body>
+    <div id="profile-container" class="profile-container">
+        <h1 id="profile-title" class="profile-title">User Profile</h1>
+        <div id="profile-details" class="profile-details">
+            <p id="profile-username" class="profile-item"><strong>Username:</strong> <%= user.username %></p>
+            <p id="profile-fullname" class="profile-item"><strong>Full Name:</strong> <%= user.fullName %></p>
+        </div>
+        <div id="profile-stories" class="profile-stories">
+            <h2>User Stories</h2>
+            <ul class="story-list">
+                <% user.stories.forEach(story => { %>
+                    <li class="story-item" data-story-id="<%= story.id %>"><%= story.title %></li>
+                <% }) %>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

@@ -74,6 +74,19 @@ router.post('/createStory', async (req, res) => {
     }
 });
 
+router.get('/user/:id', async (req, res) => {
+    try {
+        let user = await Service.getUserById(req.params.id);
+        user = await Service.getUserData(user);
+        if (user) {
+            res.render('userProfile', { user });
+        } else {
+            res.status(404).send('User not found');
+        }
+    } catch (error) {
+        res.status(500).send('Error fetching user profile');
+    }
+});
 
 router.post('/signup', async (req, res) => {
     let username = req.body.username;
