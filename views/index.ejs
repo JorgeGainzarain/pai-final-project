@@ -88,12 +88,45 @@
         }
 
         async function showStory(storyId) {
+            // Store the last tab
+            const currentTab = localStorage.getItem('currentTab');
+            localStorage.setItem('lastTab', currentTab);
+
             fetch(`/story/${storyId}`)
                 .then(response => response.text())
                 .then(html => {
                     document.getElementById('header').innerHTML = '';
                     document.getElementById('content').innerHTML = html;
+
+                    const backButton = document.querySelector('.back-button');
+                    backButton.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        goBack();
+                    });
                 });
+        }
+
+        function goBack() {
+            const lastTab = localStorage.getItem('lastTab');
+            switch (lastTab) {
+                case 'home':
+                    showHome();
+                    break;
+                case 'stories':
+                    showStories();
+                    break;
+                case 'my-stories':
+                    showMyStories();
+                    break;
+                case 'create-story':
+                    showCreateStory();
+                    break;
+                case 'settings':
+                    showSettings();
+                    break;
+                default:
+                    showHome();
+            }
         }
 
         async function showStories() {
@@ -121,6 +154,16 @@
                 .then(html => {
                     document.getElementById('header').innerHTML = '<h1>My Stories</h1>';
                     document.getElementById('content').innerHTML = html;
+
+                    // Add click event listeners to each story link
+                    const storyLinks = document.querySelectorAll('.story-box');
+                    storyLinks.forEach(link => {
+                        link.addEventListener('click', (event) => {
+                            event.preventDefault();
+                            const storyId = link.getAttribute('href').split('/').pop();
+                            showStory(storyId);
+                        });
+                    });
                 });
         }
 
