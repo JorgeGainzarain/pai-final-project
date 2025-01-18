@@ -68,4 +68,15 @@ export default class DatabaseService {
             throw error;
         }
     }
+
+    async getStoriesByUser(user_id) {
+        try {
+            const sql = 'SELECT * FROM stories WHERE author_id = ?';
+            const params = [user_id];
+            return await execQuery(sql, params);
+        } catch (error) {
+            console.error('Error fetching stories:', error);
+            throw error;
+        }
+    }
 }

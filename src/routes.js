@@ -41,6 +41,15 @@ router.get('/showStories', async (req, res) => {
     res.render('showStories', { stories });
 });
 
+router.get('/myStories', async (req, res) => {
+    const user = req.session['user'];
+    if (!user || !user.id) {
+        return res.redirect('/login');
+    }
+    const stories = await Service.getStoriesByUser(user.id);
+    res.render('showStories', { stories });
+});
+
 router.post('/createStory', async (req, res) => {
     const user = req.session['user'];
     if (!user || !user.id) {
