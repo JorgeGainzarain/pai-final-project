@@ -108,6 +108,26 @@ nav a.active-tab {
     transform: translateY(2px);
 }
 
+/* Add this to your existing CSS */
+nav a[data-tab] {
+    position: relative;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #ffffff;
+    transition: transform 0.3s, color 0.3s;
+}
+
+nav a[data-tab]:hover {
+    color: #4CAF50;
+    transform: translateY(-2px);
+}
+
+nav a[data-tab].active-tab {
+    color: #4CAF50;
+    transform: translateY(2px);
+    font-weight: bold;
+}
+
 .header {
     text-align: center;
     margin: 40px 0;

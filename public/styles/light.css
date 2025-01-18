@@ -108,6 +108,25 @@ nav a.active-tab {
     transform: translateY(2px);
 }
 
+nav a[data-tab] {
+    position: relative;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #000000;
+    transition: transform 0.3s, color 0.3s;
+}
+
+nav a[data-tab]:hover {
+    color: #007BFF;
+    transform: translateY(-2px);
+}
+
+nav a[data-tab].active-tab {
+    color: #007BFF;
+    transform: translateY(2px);
+    font-weight: bold;
+}
+
 .header {
     text-align: center;
     margin: 40px 0;
