@@ -20,6 +20,9 @@
         .user-box span {
             margin-right: 10px;
         }
+        .hidden-tab {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -36,6 +39,8 @@
             <a href="#" data-tab="create-story" onclick="showCreateStory()">Create Story</a>
             <a href="#" data-tab="settings" onclick="showSettings()">Settings</a>
         <% } %>
+        <a href="#" data-tab="profile" class="hidden-tab" onclick="showProfile()">Profile</a>
+        <a href="#" data-tab="story" class="hidden-tab" onclick="showStory()">Story</a>
         <div class="user-box" onclick="toggleDropdown()">
             <% if (user) { %>
                 <span><%= user.username %></span>
@@ -46,6 +51,7 @@
         </div>
         <div class="dropdown" id="userDropdown">
             <% if (user) { %>
+                <a href="#" onclick="showProfile(undefined)">Profile</a>
                 <a href="#" onclick="document.getElementById('logoutForm').submit();">Sign Out</a>
             <% } else { %>
                 <a href="/login">Login</a>
@@ -62,6 +68,11 @@
         function toggleDropdown() {
             const dropdown = document.getElementById('userDropdown');
             dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function hideDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.style.display = 'none';
         }
 
         function showSettings() {
@@ -87,17 +98,150 @@
             content.innerHTML = '<p>This is your dashboard where you can manage your account, view your profile, and adjust your settings. Explore the options above to get started.</p>';
         }
 
+        function showProfile(userId) {
+            localStorage.setItem('currentTab', 'profile');
+            localStorage.setItem('profileId', userId);
+            if (userId === undefined) {
+                userId = '<%= user ? user.id : '' %>';
+            }
+            if (!userId) {
+                alert('Please log in to view your profile.');
+                return;
+            }
+
+            fetch(`/user/${userId}`)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('header').innerHTML = '';
+                    document.getElementById('content').innerHTML = html;
+                    const storyItems = document.querySelectorAll('.story-item');
+                    storyItems.forEach(item => {
+                        item.addEventListener('click', () => {
+                            const storyId = item.getAttribute('data-story-id');
+                            showStory(storyId);
+                        });
+                    });
+                    hideDropdown();
+                })
+                .catch(error => {
+                    console.error('Error fetching profile:', error);
+                });
+        }
+
+        async function showStory(storyId) {
+            // Store the last tab and current story ID
+            const currentTab = localStorage.getItem('currentTab');
+            if (currentTab !== 'story') {
+                localStorage.setItem('lastTab', currentTab);
+            }
+            localStorage.setItem('currentStoryId', storyId);
+
+            localStorage.setItem('currentTab', 'story');
+
+            fetch(`/story/${storyId}`)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('header').innerHTML = '';
+                    document.getElementById('content').innerHTML = html;
+
+                    const backButton = document.querySelector('.back-button');
+                    backButton.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        goBack();
+                    });
+
+                    const profileButtons = document.querySelectorAll('.story-author');
+                    profileButtons.forEach(button => {
+                        button.addEventListener('click', (event) => {
+                            event.preventDefault();
+                            const userId = button.getAttribute('data-user-id');
+                            showProfile(userId);
+                        });
+                    });
+                });
+        }
+
+        function goBack() {
+            const lastTab = localStorage.getItem('lastTab');
+            const currentStoryId = localStorage.getItem('currentStoryId');
+            const currProfileId = localStorage.getItem('profileId');
+
+            switch (lastTab) {
+                case 'home':
+                    showHome();
+                    break;
+                case 'stories':
+                    showStories();
+                    break;
+                case 'my-stories':
+                    showMyStories();
+                    break;
+                case 'create-story':
+                    showCreateStory();
+                    break;
+                case 'settings':
+                    showSettings();
+                    break;
+                case 'profile':
+                    if (currProfileId) {
+                        showProfile(currProfileId);
+                    } else {
+                        showHome();
+                    }
+                    break;
+                case 'story':
+                    if (currentStoryId) {
+                        showStory(currentStoryId);
+                    } else {
+                        showHome();
+                    }
+                    break;
+                default:
+                    showHome();
+            }
+            localStorage.setItem('currentTab', lastTab);
+        }
+
         async function showStories() {
-            fetch('/showStories.ejs')
+            fetch('/showStories')
                 .then(response => response.text())
                 .then(html => {
                     document.getElementById('header').innerHTML = '<h1>Browse Stories</h1>';
                     document.getElementById('content').innerHTML = html;
+
+                    // Add click event listeners to each story link
+                    const storyLinks = document.querySelectorAll('.story-box');
+                    storyLinks.forEach(link => {
+                        link.addEventListener('click', (event) => {
+                            event.preventDefault();
+                            const storyId = link.getAttribute('href').split('/').pop();
+                            showStory(storyId);
+                        });
+                    });
+                });
+        }
+
+        async function showMyStories() {
+            fetch('/myStories')
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('header').innerHTML = '<h1>My Stories</h1>';
+                    document.getElementById('content').innerHTML = html;
+
+                    // Add click event listeners to each story link
+                    const storyLinks = document.querySelectorAll('.story-box');
+                    storyLinks.forEach(link => {
+                        link.addEventListener('click', (event) => {
+                            event.preventDefault();
+                            const storyId = link.getAttribute('href').split('/').pop();
+                            showStory(storyId);
+                        });
+                    });
                 });
         }
 
         function showCreateStory() {
-            fetch('/createStory.ejs')
+            fetch('/createStory')
                 .then(response => response.text())
                 .then(html => {
                     document.getElementById('header').innerHTML = '<h1>Create a New Story</h1>';
@@ -116,8 +260,14 @@
         document.addEventListener('DOMContentLoaded', () => {
             const tabs = document.querySelectorAll('nav a[data-tab]');
             const currentTab = localStorage.getItem('currentTab') || 'home';
+            const currentStoryId = localStorage.getItem('currentStoryId');
+            const currProfileId = localStorage.getItem('profileId');
+
 
             function showTab(tabName) {
+                // Remove the active class from all tabs
+                tabs.forEach(tab => tab.classList.remove('active-tab'));
+
                 // Ensure we execute the appropriate function for the tab
                 switch (tabName) {
                     case 'home':
@@ -127,26 +277,39 @@
                         showStories();
                         break;
                     case 'my-stories':
-                        if (typeof showMyStories === 'function') {
-                            showMyStories();
-                        } else {
-                            console.error('showMyStories function is not defined.');
-                        }
+                        showMyStories();
                         break;
                     case 'create-story':
-                        if (typeof showCreateStory === 'function') {
-                            showCreateStory();
-                        } else {
-                            console.error('showCreateStory function is not defined.');
-                        }
+                        showCreateStory();
                         break;
                     case 'settings':
                         showSettings();
                         break;
+                    case 'profile':
+                        if (currProfileId) {
+                            showProfile(currProfileId);
+                        } else {
+                            showHome();
+                        }
+                        break;
+                    case 'story':
+                        if (currentStoryId) {
+                            showStory(currentStoryId);
+                        } else {
+                            showHome();
+                        }
+                        break;
                     default:
                         showHome();
                 }
+
+                // Add the active class to the selected tab
+                const activeTab = document.querySelector(`nav a[data-tab="${tabName}"]`);
+                if (activeTab) {
+                    activeTab.classList.add('active-tab');
+                }
             }
+
 
             // Render the current tab's content
             showTab(currentTab);
@@ -156,12 +319,19 @@
                 tab.addEventListener('click', () => {
                     const tabName = tab.getAttribute('data-tab');
                     localStorage.setItem('currentTab', tabName);
+                    localStorage.removeItem('currentStoryId'); // Clear the story ID when switching tabs
                     showTab(tabName);
                 });
             });
+
+            // Handle hidden tabs
+            const hiddenTabs = ['profile', 'story'];
+            hiddenTabs.forEach(tabName => {
+                if (currentTab === tabName) {
+                    showTab(tabName);
+                }
+            });
         });
-
-
     </script>
 </body>
 </html>

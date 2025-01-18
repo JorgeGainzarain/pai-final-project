@@ -25,10 +25,42 @@ export default class Service {
     }
 
     static async getStories() {
-        return await this.repository.getStories();
+        let stories = await this.repository.getStories();
+        stories = await Promise.all(stories.map(async (story) => {
+            story.author = await this.repository.getUserById(story.author_id);
+            return story;
+        }));
+        return stories;
     }
 
-    static async createStory(title, content) {
-        return await this.repository.createStory(title, content);
+    static async getStoriesByUser(user_id) {
+        let stories = await this.repository.getStoriesByUser(user_id);
+        stories = await Promise.all(stories.map(async (story) => {
+            story.author = await this.repository.getUserById(story.author_id);
+            return story;
+        }));
+        return stories;
+    }
+
+    static async createStory(user_id, title, content) {
+        return await this.repository.createStory(user_id, title, content);
+    }
+
+    static async getStoryById(id) {
+        let story = await this.repository.getStoryById(id);
+        story.author = await this.repository.getUserById(story.author_id);
+        return story;
+    }
+
+    static async getUserById(id) {
+        const user =  await this.repository.getUserById(id);
+        // Return without password
+        const { password, ...userWithoutPassword } = user;
+        return userWithoutPassword;
+    }
+
+    static async getUserData(user) {
+        user.stories = await this.getStoriesByUser(user.id);
+        return user;
     }
 }

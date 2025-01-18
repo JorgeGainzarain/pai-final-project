@@ -1,0 +1,48 @@
+/* User Box Styles */
+.user-box {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 95%;
+    display: flex;
+    align-items: center;
+    color: white;
+    margin-right: 5px;
+    cursor: pointer;
+    z-index: 1000;
+    user-select: none;
+}
+
+.user-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+}
+
+.dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #333;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    border-radius: 5px;
+    overflow: hidden;
+    user-select: none;
+}
+
+.dropdown a {
+    display: block;
+    padding: 10px;
+    color: #fff;
+    text-decoration: none;
+}
+
+.dropdown a:hover {
+    background-color: #555;
+}
+
+ .user-box.active-tab {
+     border-bottom: 2px solid #4CAF50;
+     transform: translateY(2px);
+ }
