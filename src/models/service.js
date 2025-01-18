@@ -25,10 +25,17 @@ export default class Service {
     }
 
     static async getStories() {
-        return await this.repository.getStories();
+        let stories = await this.repository.getStories();
+        stories = await Promise.all(stories.map(async (story) => {
+            story.author = await this.repository.getUserById(story.author_id);
+            console.log(story.author);
+            return story;
+        }));
+        return stories;
     }
 
-    static async createStory(title, content) {
-        return await this.repository.createStory(title, content);
+    static async createStory(user_id, title, content) {
+        console.log('Creating story', user_id, title, content);
+        return await this.repository.createStory(user_id, title, content);
     }
 }

@@ -12,15 +12,6 @@ router.get('/', (req, res) => {
     res.redirect('/index');
 });
 
-router.get('/stories', async (req, res) => {
-    if (!req.session.user) {
-        return res.redirect('/index');
-    }
-    const stories = await Service.getStories();
-    console.log("Stories", stories);
-    res.json(stories);
-});
-
 router.get('/login', (req, res) => {
     const darkModeEnabled = (req.cookies['dark-mode'] === 'enabled');
     res.render('login', { theme: darkModeEnabled ? 'dark' : 'light' , error: req.query.error || null});
@@ -38,19 +29,26 @@ router.get('/index', async (req, res) =>  {
     res.render('index', { theme: darkModeEnabled ? 'dark' : 'light' , user: user});
 });
 
-router.get('/createStory.ejs', (req, res) => {
+router.get('/createStory', (req, res) => {
     res.sendFile(path.join(__dirname, '../views/createStory.ejs'));
 });
 
-router.get('/showStories.ejs', async (req, res) => {
+router.get('/showStories', async (req, res) => {
     const stories = await Service.getStories();
+    stories.forEach(story => {
+        console.log(story);
+    });
     res.render('showStories', { stories });
 });
 
 router.post('/createStory', async (req, res) => {
+    const user = req.session['user'];
+    if (!user || !user.id) {
+        return res.redirect('/login');
+    }
     const { title, content } = req.body;
     try {
-        await Service.createStory(title, content);
+        await Service.createStory(user.id, title, content);
         res.redirect('/index');
     } catch (error) {
         res.status(500).send('Error creating story');

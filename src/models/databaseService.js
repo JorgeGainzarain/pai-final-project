@@ -1,6 +1,21 @@
 import { execQuery } from '../database.js';
 
 export default class DatabaseService {
+
+    async getUserById(id) {
+        try {
+            const sql = 'SELECT * FROM users WHERE id = ?';
+            const params = [id];
+            const result = await execQuery(sql, params);
+            if (result.length === 0) {
+                return null;
+            }
+            return result[0];
+        } catch (error) {
+            console.error('Error fetching user:', error);
+            throw error;
+        }
+    }
     async getUser(username) {
         try {
             const sql = 'SELECT * FROM users WHERE username = ?';
@@ -43,10 +58,10 @@ export default class DatabaseService {
         }
     }
 
-    async createStory(title, content) {
+    async createStory(user_id, title, content) {
         try {
-            const sql = 'INSERT INTO stories (title, content) VALUES (?, ?)';
-            const params = [title, content];
+            const sql = 'INSERT INTO stories (title, content, author_id) VALUES (?, ?, ?)';
+            const params = [title, content, user_id];
             await execQuery(sql, params);
         } catch (error) {
             console.error('Error creating story:', error);

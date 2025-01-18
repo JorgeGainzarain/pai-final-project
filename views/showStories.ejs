@@ -6,6 +6,7 @@
                     <a href="/story/<%= story.id %>" class="story-box">
                         <p class="story-title"><%= story.title %></p>
                         <p class="story-content"><%= story.content %></p>
+                        <p class="story-author">By: <%= story.author.fullName %></p>
                     </a>
                 <% }); %>
             </div>
