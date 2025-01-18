@@ -79,4 +79,19 @@ export default class DatabaseService {
             throw error;
         }
     }
+
+    async getStoryById(id) {
+        try {
+            const sql = 'SELECT * FROM stories WHERE id = ?';
+            const params = [id];
+            const result = await execQuery(sql, params);
+            if (result.length === 0) {
+                return null;
+            }
+            return result[0];
+        } catch (error) {
+            console.error('Error fetching story:', error);
+            throw error;
+        }
+    }
 }

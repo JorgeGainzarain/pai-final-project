@@ -33,6 +33,19 @@ router.get('/createStory', (req, res) => {
     res.sendFile(path.join(__dirname, '../views/createStory.ejs'));
 });
 
+router.get('/story/:id', async (req, res) => {
+    try {
+        const story = await Service.getStoryById(req.params.id);
+        if (story) {
+            res.render('storyDetails', { story });
+        } else {
+            res.status(404).send('Story not found');
+        }
+    } catch (error) {
+        res.status(500).send('Error fetching story');
+    }
+});
+
 router.get('/showStories', async (req, res) => {
     const stories = await Service.getStories();
     res.render('showStories', { stories });
