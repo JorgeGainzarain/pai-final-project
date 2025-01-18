@@ -1,0 +1,14 @@
+<div class="content-wrapper">
+    <div class="content" id="content">
+        <div class="stories-wrapper">
+            <div class="stories-container">
+                <% stories.forEach(function(story) { %>
+                    <a href="/story/<%= story.id %>" class="story-box">
+                        <p class="story-title"><%= story.title %></p>
+                        <p class="story-content"><%= story.content %></p>
+                    </a>
+                <% }); %>
+            </div>
+        </div>
+    </div>
+</div>

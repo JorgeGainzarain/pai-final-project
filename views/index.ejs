@@ -1,3 +1,4 @@
+<!-- views/index.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,12 +29,12 @@
         </button>
     </div>
     <nav>
-        <a href="#" onclick="showHome()">Home</a>
-        <a href="/browse">Browse Stories</a>
+        <a href="#" data-tab="home" onclick="showHome()">Home</a>
+        <a href="#" data-tab="stories" onclick="showStories()">Browse Stories</a>
         <% if (user) { %>
-            <a href="/my-stories">My Stories</a>
-            <a href="/create-story">Create Story</a>
-            <a href="#" onclick="showSettings()">Settings</a>
+            <a href="#" data-tab="my-stories" onclick="showMyStories()">My Stories</a>
+            <a href="#" data-tab="create-story" onclick="showCreateStory()">Create Story</a>
+            <a href="#" data-tab="settings" onclick="showSettings()">Settings</a>
         <% } %>
         <div class="user-box" onclick="toggleDropdown()">
             <% if (user) { %>
@@ -52,24 +53,11 @@
             <% } %>
         </div>
     </nav>
-    <div class="header" id="header">
-        <% if (user) { %>
-            <h1>Welcome, <%= user.fullName %></h1>
-            <p class="welcome-message">We're glad to have you back!</p>
-        <% } else { %>
-            <h1>Welcome, Guest</h1>
-            <p class="welcome-message">Please log in to access more features.</p>
-        <% } %>
-    </div>
-    <div class="content" id="content">
-        <p>This is your dashboard where you can manage your account, view your profile, and adjust your settings. Explore the options above to get started.</p>
-    </div>
+    <div class="header" id="header"></div>
+    <div class="content" id="content"></div>
     <form id="logoutForm" action="/logout" method="POST" style="display: none;">
         <button type="submit" class="logout-btn">Logout</button>
     </form>
-    <footer>
-        <p>&copy; 2024 PAI USJ. Auth System. Jorge Gainzarain.</p>
-    </footer>
     <script>
         function toggleDropdown() {
             const dropdown = document.getElementById('userDropdown');
@@ -89,9 +77,77 @@
         function showHome() {
             const header = document.getElementById('header');
             const content = document.getElementById('content');
-            header.innerHTML = `<h1>Welcome, <%= user ? user.fullName : 'Guest' %></h1><p class="welcome-message">We're glad to have you back!</p>`;
+            header.innerHTML = `<% if (user) { %>
+                <h1>Welcome, <%= user.fullName %></h1>
+                <p class="welcome-message">We're glad to have you back!</p>
+            <% } else { %>
+                <h1>Welcome, Guest</h1>
+                <p class="welcome-message">Please log in to access more features.</p>
+            <% } %>`;
             content.innerHTML = '<p>This is your dashboard where you can manage your account, view your profile, and adjust your settings. Explore the options above to get started.</p>';
         }
+
+        async function showStories() {
+            fetch('/showStories.ejs')
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('header').innerHTML = '<h1>Browse Stories</h1>';
+                    document.getElementById('content').innerHTML = html;
+                });
+        }
+
+        function showCreateStory() {
+            fetch('/createStory.ejs')
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('header').innerHTML = '<h1>Create a New Story</h1>';
+                    document.getElementById('content').innerHTML = html;
+                });
+        }
+
+        function moveLeft() {
+            // Implement the logic to move left
+        }
+
+        function moveRight() {
+            // Implement the logic to move right
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('nav a[data-tab]');
+            const currentTab = localStorage.getItem('currentTab') || 'home';
+
+            function showTab(tabName) {
+                switch (tabName) {
+                    case 'home':
+                        showHome();
+                        break;
+                    case 'stories':
+                        showStories();
+                        break;
+                    case 'my-stories':
+                        showMyStories();
+                        break;
+                    case 'create-story':
+                        showCreateStory();
+                        break;
+                    case 'settings':
+                        showSettings();
+                        break;
+                    default:
+                        showHome();
+                }
+            }
+
+            showTab(currentTab);
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabName = tab.getAttribute('data-tab');
+                    localStorage.setItem('currentTab', tabName);
+                });
+            });
+        });
     </script>
 </body>
 </html>
