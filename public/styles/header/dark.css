@@ -1,0 +1,16 @@
+/* Header Styles */
+.header {
+    text-align: center;
+    margin: 40px 0;
+}
+
+.header h2 {
+    margin-bottom: 20px;
+    color: #4CAF50;
+}
+
+.welcome-message {
+    font-size: 18px;
+    color: #bbb;
+    margin-bottom: 30px;
+}

@@ -1,0 +1,15 @@
+/* Dark Mode Switch Styles */
+#dark-mode-toggle {
+    position: fixed;
+    top: 2px;
+    left: 20px;
+    z-index: 1000;
+}
+
+#dark-mode-toggle button {
+    background: none;
+    border: none;
+    color: #000;
+    font-size: 25px;
+    cursor: pointer;
+}
