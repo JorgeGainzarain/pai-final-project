@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node src/index",
-    "dev": "nodemon src/index"
+    "dev": "nodemon --watch src --watch views/* src/index"
   },
   "dependencies": {
     "cookie-parser": "^1.4.7",
