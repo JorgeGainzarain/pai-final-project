@@ -1,0 +1,17 @@
+<div class="header" id="header">
+    <h1>Browse Stories</h1>
+</div>
+<div class="content-wrapper">
+    <div class="content" id="content">
+        <div class="stories-wrapper">
+            <div class="stories-container">
+                <% stories.forEach(function(story) { %>
+                    <a href="/story/<%= story.id %>" class="story-box">
+                        <h3 class="story-title"><%= story.title %></h3>
+                        <p class="story-content"><%= story.content %></p>
+                    </a>
+                <% }); %>
+            </div>
+        </div>
+    </div>
+</div>

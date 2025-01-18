@@ -195,3 +195,55 @@ footer {
     font-size: 25px;
     cursor: pointer;
 }
+
+/* ShowStories styles */
+
+.content-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.story-box {
+    display: block;
+    background-color: #333;
+    border: 5px solid #444;
+    border-radius: 10px;
+    width: auto;
+    height: auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s, box-shadow 0.3s;
+    text-decoration: none;
+    color: inherit;
+    margin-bottom: 20px;
+}
+
+.story-box:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.7);
+}
+
+.story-title {
+    font-size: 22px;
+    color: #fff;
+}
+
+.story-content {
+    font-size: 16px;
+    color: #bbb;
+    margin-bottom: 10px;
+}
+
+.no-stories-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.no-stories-message {
+    text-align: center;
+    font-size: 18px;
+    color: #bbb;
+}

@@ -1,0 +1,23 @@
+<!-- views/createStory.ejs -->
+<div class="header" id="header">
+    <h1>Create a New Story</h1>
+</div>
+<div class="content" id="content">
+    <form id="createStoryForm" method="POST" action="/createStory">
+        <div>
+            <label for="storyTitle">Title:</label>
+            <input type="text" id="storyTitle" name="title" required>
+        </div>
+        <div>
+            <label for="storyContent">Content:</label>
+            <textarea id="storyContent" name="content" rows="10" required></textarea>
+        </div>
+        <div>
+            <button type="button" onclick="moveLeft()">Left</button>
+            <button type="button" onclick="moveRight()">Right</button>
+        </div>
+        <div>
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+</div>
