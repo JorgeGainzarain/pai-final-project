@@ -2,7 +2,7 @@ import express from 'express';
 import authRoutes from './routes.js';
 import session from 'express-session';
 import dotenv from 'dotenv';
-import initializeDatabase from './database.js';
+import { initializeDatabase } from './database.js';
 import cookieParser from 'cookie-parser';
 
 dotenv.config();
