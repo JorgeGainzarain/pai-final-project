@@ -51,4 +51,16 @@ export default class Service {
         story.author = await this.repository.getUserById(story.author_id);
         return story;
     }
+
+    static async getUserById(id) {
+        const user =  await this.repository.getUserById(id);
+        // Return without password
+        const { password, ...userWithoutPassword } = user;
+        return userWithoutPassword;
+    }
+
+    static async getUserData(user) {
+        user.stories = await this.getStoriesByUser(user.id);
+        return user;
+    }
 }
