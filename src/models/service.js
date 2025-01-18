@@ -45,4 +45,10 @@ export default class Service {
     static async createStory(user_id, title, content) {
         return await this.repository.createStory(user_id, title, content);
     }
+
+    static async getStoryById(id) {
+        let story = await this.repository.getStoryById(id);
+        story.author = await this.repository.getUserById(story.author_id);
+        return story;
+    }
 }

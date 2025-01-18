@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Story Details</title>
+    <link rel="stylesheet" href="/styles/dark.css" id="theme-style">
+</head>
+<body>
+<div class="story-details">
+    <h1><%= story.title %></h1>
+    <div class="story-content-box">
+        <p><%= story.content %></p>
+    </div>
+    <a href="/users/<%= story.author.id %>" class="story-author">By: <%= story.author.fullName %></a>
+</div>
+</body>
+</html>

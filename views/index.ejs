@@ -87,12 +87,31 @@
             content.innerHTML = '<p>This is your dashboard where you can manage your account, view your profile, and adjust your settings. Explore the options above to get started.</p>';
         }
 
+        async function showStory(storyId) {
+            fetch(`/story/${storyId}`)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('header').innerHTML = '';
+                    document.getElementById('content').innerHTML = html;
+                });
+        }
+
         async function showStories() {
             fetch('/showStories')
                 .then(response => response.text())
                 .then(html => {
                     document.getElementById('header').innerHTML = '<h1>Browse Stories</h1>';
                     document.getElementById('content').innerHTML = html;
+
+                    // Add click event listeners to each story link
+                    const storyLinks = document.querySelectorAll('.story-box');
+                    storyLinks.forEach(link => {
+                        link.addEventListener('click', (event) => {
+                            event.preventDefault();
+                            const storyId = link.getAttribute('href').split('/').pop();
+                            showStory(storyId);
+                        });
+                    });
                 });
         }
 
