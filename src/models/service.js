@@ -1,4 +1,5 @@
 import DatabaseService from "./databaseService.js";
+import bcrypt from 'bcrypt';
 
 export default class Service {
     static repository = new DatabaseService();
@@ -6,7 +7,7 @@ export default class Service {
     static async signin(username, password) {
         const users = (await this.repository.getUser(username));
         const user = users ? users[0] : undefined;
-        if(user !== undefined && user.password === password) {
+        if(user !== undefined && user.password !== undefined && await bcrypt.compare(password, user.password)) {
             const { password, ...userWithoutPassword } = user;
             return userWithoutPassword;
         }
@@ -16,7 +17,11 @@ export default class Service {
     }
 
     static async signup(username, fullName, password) {
-        return await this.repository.addUser(username, fullName, password);
+        // Cipher the password
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+        return await this.repository.addUser(username, fullName, hashedPassword);
     }
 
     static async getStories() {

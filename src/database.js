@@ -1,6 +1,7 @@
 import {config} from 'dotenv';
 import sqlite3 from 'sqlite3';
 import {open} from 'sqlite';
+import Service from "./models/service.js";
 
 config(); // Load environment variables
 
@@ -49,21 +50,12 @@ export async function initializeDatabase() {
 
 
         // Check if the default user already exists
-        const row = await db.get('SELECT COUNT(*) AS count FROM users WHERE username = "user"');
-        if (row.count === 0) {
-            // Insert the default user if it doesn't exist
-            await db.run(`
-                INSERT INTO users (username, password, fullName)
-                VALUES ('user', 'password', 'Test user')
-            `);
-            console.log('Default user inserted.');
-            databaseInitialized = true;
-        }
+        Service.signup('admin', 'Admin', 'admin').then(() => {
+            console.log('Default user created');
+        }).catch(err => {
+            console.error('Error creating default user:', err);
+        });
 
-        // Log initialization status only if the database was initialized
-        if (databaseInitialized) {
-            console.log('Database initialized');
-        }
     } catch (err) {
         console.error('Error setting up the database:', err);
     }
