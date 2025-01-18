@@ -96,6 +96,15 @@
                 });
         }
 
+        async function showMyStories() {
+            fetch('/myStories')
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('header').innerHTML = '<h1>My Stories</h1>';
+                    document.getElementById('content').innerHTML = html;
+                });
+        }
+
         function showCreateStory() {
             fetch('/createStory')
                 .then(response => response.text())
@@ -127,11 +136,7 @@
                         showStories();
                         break;
                     case 'my-stories':
-                        if (typeof showMyStories === 'function') {
-                            showMyStories();
-                        } else {
-                            console.error('showMyStories function is not defined.');
-                        }
+                        showMyStories();
                         break;
                     case 'create-story':
                         if (typeof showCreateStory === 'function') {
