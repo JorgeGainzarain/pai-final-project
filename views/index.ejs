@@ -88,7 +88,7 @@
         }
 
         async function showStories() {
-            fetch('/showStories.ejs')
+            fetch('/showStories')
                 .then(response => response.text())
                 .then(html => {
                     document.getElementById('header').innerHTML = '<h1>Browse Stories</h1>';
@@ -97,7 +97,7 @@
         }
 
         function showCreateStory() {
-            fetch('/createStory.ejs')
+            fetch('/createStory')
                 .then(response => response.text())
                 .then(html => {
                     document.getElementById('header').innerHTML = '<h1>Create a New Story</h1>';
