@@ -347,3 +347,18 @@ footer {
 .story-details .story-author:hover {
     background-color: #45a049;
 }
+
+.back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+.back-button:hover {
+    background-color: #45a049;
+}
