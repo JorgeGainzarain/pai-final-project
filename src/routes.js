@@ -45,8 +45,8 @@ router.post('/signup', async (req, res) => {
 });
 
 router.post('/login', async (req, res) => {
-    let username = req.body.username;
-    let password = req.body.password;
+    let username = String(req.body.username);
+    let password = String(req.body.password);
 
     try {
         let logged = await AuthService.signin(username, password);
