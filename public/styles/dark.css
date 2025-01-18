@@ -103,6 +103,12 @@ nav a:hover {
     text-decoration: underline;
 }
 
+nav a.active {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+
 .header {
     text-align: center;
     margin: 40px 0;

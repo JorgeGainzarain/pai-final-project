@@ -118,6 +118,7 @@
             const currentTab = localStorage.getItem('currentTab') || 'home';
 
             function showTab(tabName) {
+                // Ensure we execute the appropriate function for the tab
                 switch (tabName) {
                     case 'home':
                         showHome();
@@ -126,10 +127,18 @@
                         showStories();
                         break;
                     case 'my-stories':
-                        showMyStories();
+                        if (typeof showMyStories === 'function') {
+                            showMyStories();
+                        } else {
+                            console.error('showMyStories function is not defined.');
+                        }
                         break;
                     case 'create-story':
-                        showCreateStory();
+                        if (typeof showCreateStory === 'function') {
+                            showCreateStory();
+                        } else {
+                            console.error('showCreateStory function is not defined.');
+                        }
                         break;
                     case 'settings':
                         showSettings();
@@ -139,15 +148,20 @@
                 }
             }
 
+            // Render the current tab's content
             showTab(currentTab);
 
+            // Update localStorage and handle tab switching
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
                     const tabName = tab.getAttribute('data-tab');
                     localStorage.setItem('currentTab', tabName);
+                    showTab(tabName);
                 });
             });
         });
+
+
     </script>
 </body>
 </html>
