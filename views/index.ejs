@@ -58,9 +58,6 @@
     <form id="logoutForm" action="/logout" method="POST" style="display: none;">
         <button type="submit" class="logout-btn">Logout</button>
     </form>
-    <footer>
-        <p>&copy; 2024 PAI USJ. Interactive Stories Website. Jorge Gainzarain.</p>
-    </footer>
     <script>
         function toggleDropdown() {
             const dropdown = document.getElementById('userDropdown');
@@ -94,7 +91,7 @@
             fetch('/showStories.ejs')
                 .then(response => response.text())
                 .then(html => {
-                    document.getElementById('header').innerHTML = '';
+                    document.getElementById('header').innerHTML = '<h1>Browse Stories</h1>';
                     document.getElementById('content').innerHTML = html;
                 });
         }
@@ -103,6 +100,7 @@
             fetch('/createStory.ejs')
                 .then(response => response.text())
                 .then(html => {
+                    document.getElementById('header').innerHTML = '<h1>Create a New Story</h1>';
                     document.getElementById('content').innerHTML = html;
                 });
         }

@@ -74,6 +74,10 @@ button:hover {
     text-decoration: underline;
 }
 
+body {
+    overflow-y: scroll; /* Always show the vertical scrollbar */
+}
+
 /* Index Page Styles */
 nav {
     width: 100%;
@@ -246,4 +250,44 @@ footer {
     text-align: center;
     font-size: 18px;
     color: #bbb;
+}
+
+/* Create Stories */
+
+.create-story-form {
+    background-color: #333;
+    padding: 1%;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    width: 70%;
+    height: fit-content;
+    box-sizing: border-box;
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.create-story-form div {
+    margin-bottom: 20px; 
+}
+
+.create-story-form label {
+    display: block;
+    margin-bottom: 5px; 
+    color: #fff; 
+}
+
+.create-story-form textarea {
+    width: 99%;
+    height: 100%;
+    margin-top: 0.5%;
+    margin-right: 0.5%;
+    margin-left: 0.5%;
+    resize: none;
+    background-color: #555;
+    color: #fff;
+    border: 1px solid #777;
+    border-radius: 5px;
 }

@@ -79,13 +79,14 @@ router.post('/login', async (req, res) => {
     let password = String(req.body.password);
 
     try {
-        let logged = await Service.signin(username, password);
-        if (!logged) {
+        let user = await Service.signin(username, password);
+        if (!user) {
             return res.redirect('/login?error=Invalid username or password');
         }
-        req.session['user'] = (await Service.repository.getUser(username))[0];
+        req.session['user'] = user;
         res.redirect('/index');
     } catch (e) {
+        console.error(e);
         return res.redirect('/login?error=Error during login');
     }
 });
