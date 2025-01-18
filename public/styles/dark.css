@@ -103,11 +103,10 @@ nav a:hover {
     text-decoration: underline;
 }
 
-nav a.active {
-    font-weight: bold;
-    text-decoration: underline;
+nav a.active-tab {
+    border-bottom: 2px solid #4CAF50;
+    transform: translateY(2px);
 }
-
 
 .header {
     text-align: center;

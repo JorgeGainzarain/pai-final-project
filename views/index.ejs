@@ -127,6 +127,9 @@
             const currentTab = localStorage.getItem('currentTab') || 'home';
 
             function showTab(tabName) {
+                // Remove the active class from all tabs
+                tabs.forEach(tab => tab.classList.remove('active-tab'));
+
                 // Ensure we execute the appropriate function for the tab
                 switch (tabName) {
                     case 'home':
@@ -139,17 +142,19 @@
                         showMyStories();
                         break;
                     case 'create-story':
-                        if (typeof showCreateStory === 'function') {
-                            showCreateStory();
-                        } else {
-                            console.error('showCreateStory function is not defined.');
-                        }
+                        showCreateStory();
                         break;
                     case 'settings':
                         showSettings();
                         break;
                     default:
                         showHome();
+                }
+
+                // Add the active class to the selected tab
+                const activeTab = document.querySelector(`nav a[data-tab="${tabName}"]`);
+                if (activeTab) {
+                    activeTab.classList.add('active-tab');
                 }
             }
 

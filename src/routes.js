@@ -35,9 +35,6 @@ router.get('/createStory', (req, res) => {
 
 router.get('/showStories', async (req, res) => {
     const stories = await Service.getStories();
-    stories.forEach(story => {
-        console.log(story);
-    });
     res.render('showStories', { stories });
 });
 

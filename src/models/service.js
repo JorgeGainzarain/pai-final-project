@@ -43,7 +43,6 @@ export default class Service {
     }
 
     static async createStory(user_id, title, content) {
-        console.log('Creating story', user_id, title, content);
         return await this.repository.createStory(user_id, title, content);
     }
 }
