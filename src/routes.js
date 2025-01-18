@@ -20,10 +20,6 @@ router.get('/signup', (req, res) => {
 router.get('/index', (req, res) => {
     let user = req.session['user'];
 
-    if (!user) {
-        return res.redirect('/login');
-    }
-
     const darkModeEnabled = req.cookies['dark-mode'] === 'enabled';
     res.render('index', { theme: darkModeEnabled ? 'dark' : 'light' , user: user});
 });
@@ -62,7 +58,7 @@ router.post('/login', async (req, res) => {
 
 router.post('/logout', (req, res) => {
     req.session.destroy(() => {
-        res.redirect('/login');
+        res.redirect('/index');
     });
 });
 
