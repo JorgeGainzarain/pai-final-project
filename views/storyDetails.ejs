@@ -43,7 +43,9 @@
         <i class="far fa-star" data-value="4"></i>
         <i class="far fa-star" data-value="5"></i>
     </div>
-    <button class="edit-button" data-story-id="<%= story.id %>">Edit</button>
+    <% if (user && user.id === story.author.id) { %>
+        <button class="edit-button" data-story-id="<%= story.id %>">Edit</button>
+    <% } %>
 </div>
 </body>
 </html>
