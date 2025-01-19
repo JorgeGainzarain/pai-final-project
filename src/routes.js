@@ -38,8 +38,9 @@ router.get('/createStory', (req, res) => {
 router.get('/story/:id', async (req, res) => {
     try {
         const story = await Service.getStoryById(req.params.id);
+        const user = req.session['user'];
         if (story) {
-            res.render('storyDetails', { story });
+            res.render('storyDetails', { story: story, user: user? user : undefined });
         } else {
             res.status(404).send('Story not found');
         }
@@ -108,6 +109,35 @@ router.post('/rateStory/:id', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).send('Error rating story');
+    }
+});
+
+// server-side route
+router.get('/editStory/:id', async (req, res) => {
+    const user = req.session['user'];
+    if (!user || !user.id) {
+        return res.redirect('/login');
+    }
+    const storyId = req.params.id;
+    const story = await Service.getStoryById(storyId);
+    if (user.id !== story.author.id) {
+        return res.status(403).send('Forbidden');
+    }
+    res.render('createStory', { story });
+});
+
+router.post('/editStory/:id', async (req, res) => {
+    const user = req.session['user'];
+    if (!user || !user.id) {
+        return res.redirect('/login');
+    }
+    const storyId = req.params.id;
+    const { title, content } = req.body;
+    try {
+        await Service.editStory(storyId, title, content);
+        res.redirect('/index');
+    } catch (error) {
+        res.status(500).send('Error editing story');
     }
 });
 

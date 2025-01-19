@@ -143,4 +143,15 @@ export default class Repository {
             throw error;
         }
     }
+
+    async editStory(storyId, title, content) {
+        try {
+            const sql = 'UPDATE stories SET title = ?, content = ? WHERE id = ?';
+            const params = [title, content, storyId];
+            await execQuery(sql, params);
+        } catch (error) {
+            console.error('Error editing story:', error);
+            throw error;
+        }
+    }
 }
