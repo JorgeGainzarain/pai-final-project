@@ -3,10 +3,12 @@ import express from 'express';
 import Service from './models/service.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import session from "express-session";
 
 const router = express.Router();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
 
 router.get('/', (req, res) => {
     res.redirect('/index');
@@ -85,6 +87,21 @@ router.get('/user/:id', async (req, res) => {
         }
     } catch (error) {
         res.status(500).send('Error fetching user profile');
+    }
+});
+
+router.post('/rateStory/:id', async (req, res) => {
+
+    const user = req.session['user'];
+    if (!user || !user.id) {
+        return res.redirect('/login');
+    }
+    try {
+        await Service.rateStory(req.params.id, user.id, req.body.score);
+        res.status(200).json('Story rated').send();
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error rating story');
     }
 });
 

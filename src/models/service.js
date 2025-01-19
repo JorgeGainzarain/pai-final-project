@@ -1,8 +1,8 @@
-import DatabaseService from "./databaseService.js";
+import Repository from "./repository.js";
 import bcrypt from 'bcrypt';
 
 export default class Service {
-    static repository = new DatabaseService();
+    static repository = new Repository();
 
     static async signin(username, password) {
         const users = (await this.repository.getUser(username));
@@ -62,5 +62,17 @@ export default class Service {
     static async getUserData(user) {
         user.stories = await this.getStoriesByUser(user.id);
         return user;
+    }
+
+    static async rateStory(story_id, user_id, score) {
+        const alreadyRated = await this.repository.getRating(story_id, user_id);
+        console.log(alreadyRated);
+        if (alreadyRated && alreadyRated.length > 0) {
+            return;
+        }
+        const response = await this.repository.rateStory(story_id, user_id, score);
+        console.log(response);
+        const avg_score = await this.repository.getRatingForStory(story_id);
+        return await this.repository.updateStoryScore(story_id, avg_score);
     }
 }
