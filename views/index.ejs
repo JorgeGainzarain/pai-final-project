@@ -127,6 +127,8 @@
                         });
                     });
 
+                    addStarRatingListeners(storyId);
+
                     const editButton = document.querySelector('.edit-button');
                     editButton.addEventListener('click', (event) => {
                         const user = '<%= user %>';
@@ -139,7 +141,6 @@
                         showEditForm(storyId);
                     });
 
-                    addStarRatingListeners(storyId);
                 });
         }
 
