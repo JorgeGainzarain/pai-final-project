@@ -6,12 +6,6 @@
     <title>Show Stories</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        .star-rating {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 10px;
-        }
         .star-rating .fa-star {
             color: gold;
         }
@@ -29,10 +23,12 @@
                             <p class="story-author">By: <%= story.author.fullName %></p>
                             <div class="star-rating">
                                 <% for (let i = 1; i <= 5; i++) { %>
-                                    <% if (story.rating >= i) { %>
-                                        <i class="fas fa-star"></i>
+                                    <% if (story.score >= i) { %>
+                                            <i class="fas fa-star"></i>
+                                    <% } else if (story.score >= i - 0.5) { %>
+                                            <i class="fa-regular fa-star-half-stroke" style="color: #FFD43B;"></i>
                                     <% } else { %>
-                                        <i class="far fa-star"></i>
+                                            <i class="far fa-star"></i>
                                     <% } %>
                                 <% } %>
                             </div>

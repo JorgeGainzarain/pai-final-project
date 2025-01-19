@@ -32,7 +32,7 @@ export async function initializeDatabase() {
                                                    title TEXT NOT NULL,
                                                    content TEXT,
                                                    author_id INTEGER,
-                                                   score INTEGER DEFAULT 0,
+                                                   score REAL DEFAULT 0,
                                                    FOREIGN KEY (author_id) REFERENCES users(id)
             );
         `);

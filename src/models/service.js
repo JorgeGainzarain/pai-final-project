@@ -66,13 +66,12 @@ export default class Service {
 
     static async rateStory(story_id, user_id, score) {
         const alreadyRated = await this.repository.getRating(story_id, user_id);
-        console.log(alreadyRated);
-        if (alreadyRated && alreadyRated.length > 0) {
-            return;
+        if (alreadyRated) {
+            return undefined;
         }
-        const response = await this.repository.rateStory(story_id, user_id, score);
-        console.log(response);
+        await this.repository.rateStory(story_id, user_id, score);
         const avg_score = await this.repository.getRatingForStory(story_id);
-        return await this.repository.updateStoryScore(story_id, avg_score);
+        await this.repository.updateStoryScore(story_id, avg_score);
+        return avg_score;
     }
 }

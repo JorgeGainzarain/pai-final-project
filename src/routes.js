@@ -97,8 +97,14 @@ router.post('/rateStory/:id', async (req, res) => {
         return res.redirect('/login');
     }
     try {
-        await Service.rateStory(req.params.id, user.id, req.body.score);
-        res.status(200).json('Story rated').send();
+        const result = await Service.rateStory(req.params.id, user.id, req.body.score);
+        if (!result) {
+            // User already rated this story
+            res.status(400).send('User already rated this story');
+        }
+        else {
+            res.status(200).json('Story rated').send();
+        }
     } catch (error) {
         console.error(error);
         res.status(500).send('Error rating story');

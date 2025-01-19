@@ -271,10 +271,8 @@
                     }
 
                     const value = star.getAttribute('data-value');
-                    alert(`You rated this story ${value} stars!`);
                     // Here you can add code to save the rating to the server
                     console.log(storyId, value);
-                    console.log("JSON" + JSON.stringify({ score: parseInt(value, 10) }))
                     fetch(`/rateStory/${storyId}`, {
                         method: 'POST',
                         headers: {
@@ -282,7 +280,11 @@
                         },
                         body: JSON.stringify({ score: parseInt(value, 10) })
                     })
-                        .then(data => {
+                        .then(response => {
+                            if (response.status === 400) {
+                                alert('You have already rated this story.');
+                                return;
+                            }
                             stars.forEach(s => {
                                 if (s.getAttribute('data-value') <= value) {
                                     s.classList.remove('far');
@@ -292,6 +294,7 @@
                                     s.classList.add('far');
                                 }
                             });
+                            alert(`You rated this story ${value} stars!`);
                         })
                         .catch(error => {
                             console.error('Error:', error);
