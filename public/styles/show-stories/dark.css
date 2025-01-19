@@ -11,6 +11,8 @@
     text-decoration: none;
     color: inherit;
     margin-bottom: 20px;
+    position: relative;
+    padding: 10px;
 }
 
 .story-box:hover {
@@ -41,4 +43,17 @@
     text-align: center;
     font-size: 18px;
     color: #bbb;
+}
+
+.star-rating .fa-star {
+    color: gold;
+}
+
+.close-btn {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    color: red;
+    cursor: pointer;
+    font-size: 24px; /* Increase the font size */
 }
