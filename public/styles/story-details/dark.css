@@ -68,3 +68,8 @@
     height: auto;
     margin-top: 20px;
 }
+
+.story-details {
+    position: relative;
+    padding-bottom: 50px; /* Space for the star rating */
+}

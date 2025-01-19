@@ -111,6 +111,32 @@ router.post('/rateStory/:id', async (req, res) => {
     }
 });
 
+// server-side route
+router.get('/editStory/:id', async (req, res) => {
+    const user = req.session['user'];
+    if (!user || !user.id) {
+        return res.redirect('/login');
+    }
+    const storyId = req.params.id;
+    const story = await Service.getStoryById(storyId);
+    res.render('createStory', { story });
+});
+
+router.post('/editStory/:id', async (req, res) => {
+    const user = req.session['user'];
+    if (!user || !user.id) {
+        return res.redirect('/login');
+    }
+    const storyId = req.params.id;
+    const { title, content } = req.body;
+    try {
+        await Service.editStory(storyId, title, content);
+        res.redirect('/index');
+    } catch (error) {
+        res.status(500).send('Error editing story');
+    }
+});
+
 router.post('/signup', async (req, res) => {
     let username = req.body.username;
     let fullName = req.body.fullName;

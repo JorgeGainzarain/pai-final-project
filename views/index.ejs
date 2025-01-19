@@ -127,7 +127,27 @@
                         });
                     });
 
+                    const editButton = document.querySelector('.edit-button');
+                    editButton.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        const storyId = editButton.getAttribute('data-story-id');
+                        showEditForm(storyId);
+                    });
+
                     addStarRatingListeners(storyId);
+                });
+        }
+
+        async function showEditForm(storyId) {
+            localStorage.setItem('currentTab', 'edit-story');
+            fetch(`/editStory/${storyId}`)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('header').innerHTML = '<h1>Edit Story</h1>';
+                    document.getElementById('content').innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error fetching edit form:', error);
                 });
         }
 

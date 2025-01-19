@@ -74,4 +74,8 @@ export default class Service {
         await this.repository.updateStoryScore(story_id, avg_score);
         return avg_score;
     }
+
+    static async editStory(storyId, title, content) {
+        return await this.repository.editStory(storyId, title, content);
+    }
 }
