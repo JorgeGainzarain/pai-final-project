@@ -1,4 +1,3 @@
-<!-- views/index.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -129,13 +128,11 @@
         }
 
         async function showStory(storyId) {
-            // Store the last tab and current story ID
             const currentTab = localStorage.getItem('currentTab');
             if (currentTab !== 'story') {
                 localStorage.setItem('lastTab', currentTab);
             }
             localStorage.setItem('currentStoryId', storyId);
-
             localStorage.setItem('currentTab', 'story');
 
             fetch(`/story/${storyId}`)
@@ -158,6 +155,8 @@
                             showProfile(userId);
                         });
                     });
+
+                    addStarRatingListeners(storyId);
                 });
         }
 
@@ -209,7 +208,6 @@
                     document.getElementById('header').innerHTML = '<h1>Browse Stories</h1>';
                     document.getElementById('content').innerHTML = html;
 
-                    // Add click event listeners to each story link
                     const storyLinks = document.querySelectorAll('.story-box');
                     storyLinks.forEach(link => {
                         link.addEventListener('click', (event) => {
@@ -228,7 +226,6 @@
                     document.getElementById('header').innerHTML = '<h1>My Stories</h1>';
                     document.getElementById('content').innerHTML = html;
 
-                    // Add click event listeners to each story link
                     const storyLinks = document.querySelectorAll('.story-box');
                     storyLinks.forEach(link => {
                         link.addEventListener('click', (event) => {
@@ -249,13 +246,71 @@
                 });
         }
 
-        function moveLeft() {
-            // Implement the logic to move left
+
+        function addStarRatingListeners(storyId) {
+            const stars = document.querySelectorAll('#starRating .fa-star');
+            stars.forEach(star => {
+                star.addEventListener('mouseover', () => {
+                    const value = star.getAttribute('data-value');
+                    stars.forEach(s => {
+                        if (s.getAttribute('data-value') <= value) {
+                            s.classList.remove('far');
+                            s.classList.add('fas');
+                        } else {
+                            s.classList.remove('fas');
+                            s.classList.add('far');
+                        }
+                    });
+                });
+
+                star.addEventListener('click', () => {
+                    const user = '<%= user %>';
+                    if (!user) {
+                        alert('Please log in to rate the story.');
+                        return;
+                    }
+
+                    const value = star.getAttribute('data-value');
+                    // Here you can add code to save the rating to the server
+                    console.log(storyId, value);
+                    fetch(`/rateStory/${storyId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ score: parseInt(value, 10) })
+                    })
+                        .then(response => {
+                            if (response.status === 400) {
+                                alert('You have already rated this story.');
+                                return;
+                            }
+                            stars.forEach(s => {
+                                if (s.getAttribute('data-value') <= value) {
+                                    s.classList.remove('far');
+                                    s.classList.add('fas');
+                                } else {
+                                    s.classList.remove('fas');
+                                    s.classList.add('far');
+                                }
+                            });
+                            alert(`You rated this story ${value} stars!`);
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('An error occurred while rating the story.');
+                        });
+                });
+            });
+
+            document.querySelector('.star-rating').addEventListener('mouseleave', () => {
+                stars.forEach(star => {
+                    star.classList.remove('fas');
+                    star.classList.add('far');
+                });
+            });
         }
 
-        function moveRight() {
-            // Implement the logic to move right
-        }
 
         document.addEventListener('DOMContentLoaded', () => {
             const tabs = document.querySelectorAll('nav a[data-tab]');
@@ -263,12 +318,9 @@
             const currentStoryId = localStorage.getItem('currentStoryId');
             const currProfileId = localStorage.getItem('profileId');
 
-
             function showTab(tabName) {
-                // Remove the active class from all tabs
                 tabs.forEach(tab => tab.classList.remove('active-tab'));
 
-                // Ensure we execute the appropriate function for the tab
                 switch (tabName) {
                     case 'home':
                         showHome();
@@ -303,28 +355,23 @@
                         showHome();
                 }
 
-                // Add the active class to the selected tab
                 const activeTab = document.querySelector(`nav a[data-tab="${tabName}"]`);
                 if (activeTab) {
                     activeTab.classList.add('active-tab');
                 }
             }
 
-
-            // Render the current tab's content
             showTab(currentTab);
 
-            // Update localStorage and handle tab switching
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
                     const tabName = tab.getAttribute('data-tab');
                     localStorage.setItem('currentTab', tabName);
-                    localStorage.removeItem('currentStoryId'); // Clear the story ID when switching tabs
+                    localStorage.removeItem('currentStoryId');
                     showTab(tabName);
                 });
             });
 
-            // Handle hidden tabs
             const hiddenTabs = ['profile', 'story'];
             hiddenTabs.forEach(tabName => {
                 if (currentTab === tabName) {

@@ -1,15 +1,42 @@
-<div class="content-wrapper">
-    <div class="content" id="content">
-        <div class="stories-wrapper">
-            <div class="stories-container">
-                <% stories.forEach(function(story) { %>
-                    <a href="/story/<%= story.id %>" class="story-box">
-                        <p class="story-title"><%= story.title %></p>
-                        <p class="story-content"><%= story.content.substring(0, 20) %>...</p>
-                        <p class="story-author">By: <%= story.author.fullName %></p>
-                    </a>
-                <% }); %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Show Stories</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .star-rating .fa-star {
+            color: gold;
+        }
+    </style>
+</head>
+<body>
+    <div class="content-wrapper">
+        <div class="content" id="content">
+            <div class="stories-wrapper">
+                <div class="stories-container">
+                    <% stories.forEach(function(story) { %>
+                        <a href="/story/<%= story.id %>" class="story-box">
+                            <p class="story-title"><%= story.title %></p>
+                            <p class="story-content"><%= story.content.substring(0, 20) %>...</p>
+                            <p class="story-author">By: <%= story.author.fullName %></p>
+                            <div class="star-rating">
+                                <% for (let i = 1; i <= 5; i++) { %>
+                                    <% if (story.score >= i) { %>
+                                            <i class="fas fa-star"></i>
+                                    <% } else if (story.score >= i - 0.5) { %>
+                                            <i class="fa-regular fa-star-half-stroke" style="color: #FFD43B;"></i>
+                                    <% } else { %>
+                                            <i class="far fa-star"></i>
+                                    <% } %>
+                                <% } %>
+                            </div>
+                        </a>
+                    <% }); %>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</body>
+</html>
