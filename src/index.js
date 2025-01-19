@@ -32,6 +32,15 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static files from the 'public' directory
 app.use(express.static('public'));
 
+app.use(session({
+    secret: 'your-secret-key', // Replace with a secure secret
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false, httpOnly: true } // Adjust secure based on HTTPS usage
+}));
+
+app.use(express.json());
+
 // Set EJS as the view engine
 app.set('view engine', 'ejs');
 app.set('views', './views');

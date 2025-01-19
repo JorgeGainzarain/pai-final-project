@@ -4,6 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Story Details</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .story-details {
+            position: relative;
+            padding-bottom: 50px; /* Space for the star rating */
+        }
+        .star-rating {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            bottom: 15px; /* Small margin from the bottom */
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .star-rating .fa-star {
+            color: gold;
+            cursor: pointer;
+        }
+        .star-rating .fa-star.empty {
+            color: lightgray;
+        }
+    </style>
 </head>
 <body>
 <div class="story-details">
@@ -13,6 +36,16 @@
         <p><%= story.content %></p>
     </div>
     <a href="#" class="story-author" data-user-id="<%= story.author.id %>">By: <%= story.author.fullName %></a>
+    <div class="star-rating" id="starRating">
+        <i class="far fa-star" data-value="1"></i>
+        <i class="far fa-star" data-value="2"></i>
+        <i class="far fa-star" data-value="3"></i>
+        <i class="far fa-star" data-value="4"></i>
+        <i class="far fa-star" data-value="5"></i>
+    </div>
+    <% if (user && user.id === story.author.id) { %>
+        <button class="edit-button" data-story-id="<%= story.id %>">Edit</button>
+    <% } %>
 </div>
 </body>
 </html>

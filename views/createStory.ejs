@@ -1,16 +1,32 @@
 <!-- views/createStory.ejs -->
 <div class="content" id="content">
-    <form id="createStoryForm" class="create-story-form" method="POST" action="/createStory">
-        <div>
-            <label for="storyTitle">Title</label>
-            <input type="text" id="storyTitle" name="title" required>
-        </div>
-        <div>
-            <label for="storyContent">Content</label>
-            <textarea id="storyContent" name="content" rows="10" required></textarea>
-        </div>
-        <div>
-            <button type="submit">Submit</button>
-        </div>
-    </form>
+    <% if (typeof story !== 'undefined' && story) { %>
+        <form id="createStoryForm" class="create-story-form" method="POST" action="/editStory/<%= story.id %>">
+            <div>
+                <label for="storyTitle">Title</label>
+                <input type="text" id="storyTitle" name="title" value="<%= story.title %>" required>
+            </div>
+            <div>
+                <label for="storyContent">Content</label>
+                <textarea id="storyContent" name="content" rows="10" required><%= story.content %></textarea>
+            </div>
+            <div>
+                <button type="submit">Update Story</button>
+            </div>
+        </form>
+    <% } else { %>
+        <form id="createStoryForm" class="create-story-form" method="POST" action="/story/">
+            <div>
+                <label for="storyTitle">Title</label>
+                <input type="text" id="storyTitle" name="title" value="" required>
+            </div>
+            <div>
+                <label for="storyContent">Content</label>
+                <textarea id="storyContent" name="content" rows="10" required></textarea>
+            </div>
+            <div>
+                <button type="submit">Submit</button>
+            </div>
+        </form>
+    <% } %>
 </div>

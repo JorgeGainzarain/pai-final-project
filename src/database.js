@@ -32,21 +32,21 @@ export async function initializeDatabase() {
                                                    title TEXT NOT NULL,
                                                    content TEXT,
                                                    author_id INTEGER,
+                                                   score REAL DEFAULT 0,
                                                    FOREIGN KEY (author_id) REFERENCES users(id)
             );
         `);
 
         await db.exec(`
-            CREATE TABLE IF NOT EXISTS branches (
-                                                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                                                    story_id INTEGER,
-                                                    content TEXT,
-                                                    next_branch_id INTEGER,
-                                                    FOREIGN KEY (story_id) REFERENCES stories(id),
-                                                    FOREIGN KEY (next_branch_id) REFERENCES branches(id)
+            CREATE TABLE IF NOT EXISTS ratings (
+                                                   story_id INTEGER,
+                                                   user_id INTEGER,
+                                                   score INTEGER,
+                                                   PRIMARY KEY (story_id, user_id),
+                                                   FOREIGN KEY (story_id) REFERENCES stories(id),
+                                                   FOREIGN KEY (user_id) REFERENCES users(id)
             );
         `);
-
 
 
         // Check if the default user already exists

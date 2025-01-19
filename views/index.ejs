@@ -1,4 +1,3 @@
-<!-- views/index.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,22 +7,6 @@
     <link rel="stylesheet" href="/styles/<%= theme %>.css">
     <script src="https://kit.fontawesome.com/bfe42d90a4.js" crossorigin="anonymous"></script>
     <script src="/dark-mode.js" defer></script>
-    <style>
-        .user-box {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-        }
-        .user-box .user-icon {
-            margin-left: 10px;
-        }
-        .user-box span {
-            margin-right: 10px;
-        }
-        .hidden-tab {
-            display: none;
-        }
-    </style>
 </head>
 <body>
     <div id="dark-mode-toggle">
@@ -37,15 +20,12 @@
         <% if (user) { %>
             <a href="#" data-tab="my-stories" onclick="showMyStories()">My Stories</a>
             <a href="#" data-tab="create-story" onclick="showCreateStory()">Create Story</a>
-            <a href="#" data-tab="settings" onclick="showSettings()">Settings</a>
         <% } %>
-        <a href="#" data-tab="profile" class="hidden-tab" onclick="showProfile()">Profile</a>
-        <a href="#" data-tab="story" class="hidden-tab" onclick="showStory()">Story</a>
         <div class="user-box" onclick="toggleDropdown()">
             <% if (user) { %>
-                <span><%= user.username %></span>
+                <span class="user-name"><%= user.username %></span>
             <% } else { %>
-                <span>Guest</span>
+                <span class="user-name">Sign up</span>
             <% } %>
             <img src="/user.png" alt="User Icon" class="user-icon">
         </div>
@@ -75,16 +55,6 @@
             dropdown.style.display = 'none';
         }
 
-        function showSettings() {
-            const header = document.getElementById('header');
-            const content = document.getElementById('content');
-            header.innerHTML = '<h1>Settings</h1>';
-            const imgPath = '/construction.png';
-            content.innerHTML = `
-                <img src="${imgPath}" alt="Under Construction" class="construction-image">
-            `;
-        }
-
         function showHome() {
             const header = document.getElementById('header');
             const content = document.getElementById('content');
@@ -95,7 +65,7 @@
                 <h1>Welcome, Guest</h1>
                 <p class="welcome-message">Please log in to access more features.</p>
             <% } %>`;
-            content.innerHTML = '<p>This is your dashboard where you can manage your account, view your profile, and adjust your settings. Explore the options above to get started.</p>';
+            content.innerHTML = '<p>This is your dashboard where you can manage your account, view your profile. Explore the options above to get started.</p>';
         }
 
         function showProfile(userId) {
@@ -125,17 +95,16 @@
                 })
                 .catch(error => {
                     console.error('Error fetching profile:', error);
+                    showHome();
                 });
         }
 
         async function showStory(storyId) {
-            // Store the last tab and current story ID
             const currentTab = localStorage.getItem('currentTab');
             if (currentTab !== 'story') {
                 localStorage.setItem('lastTab', currentTab);
             }
             localStorage.setItem('currentStoryId', storyId);
-
             localStorage.setItem('currentTab', 'story');
 
             fetch(`/story/${storyId}`)
@@ -158,6 +127,35 @@
                             showProfile(userId);
                         });
                     });
+
+                    addStarRatingListeners(storyId);
+
+                    const editButton = document.querySelector('.edit-button');
+                    editButton.addEventListener('click', (event) => {
+                        const user = '<%= user %>';
+                        if (!user) {
+                            alert('Please log in to edit the story.');
+                            return;
+                        }
+                        event.preventDefault();
+                        const storyId = editButton.getAttribute('data-story-id');
+                        showEditForm(storyId);
+                    });
+
+                });
+        }
+
+        async function showEditForm(storyId) {
+            localStorage.setItem('currentTab', 'edit-story');
+            fetch(`/editStory/${storyId}`)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('header').innerHTML = '<h1>Edit Story</h1>';
+                    document.getElementById('content').innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error fetching edit form:', error);
+                    showHome();
                 });
         }
 
@@ -178,9 +176,6 @@
                     break;
                 case 'create-story':
                     showCreateStory();
-                    break;
-                case 'settings':
-                    showSettings();
                     break;
                 case 'profile':
                     if (currProfileId) {
@@ -209,7 +204,6 @@
                     document.getElementById('header').innerHTML = '<h1>Browse Stories</h1>';
                     document.getElementById('content').innerHTML = html;
 
-                    // Add click event listeners to each story link
                     const storyLinks = document.querySelectorAll('.story-box');
                     storyLinks.forEach(link => {
                         link.addEventListener('click', (event) => {
@@ -218,6 +212,31 @@
                             showStory(storyId);
                         });
                     });
+
+                    const closeButton = document.querySelectorAll('.close-btn');
+                    closeButton.forEach(button => {
+                        button.addEventListener('click', (event) => {
+                            event.preventDefault();
+                            const storyId = button.parentElement.getAttribute('href').split('/').pop();
+                            removeStory(storyId);
+                        });
+                    });
+                });
+        }
+
+        async function removeStory(storyId) {
+            fetch(`/story/${storyId}`, {
+                method: 'DELETE'
+            })
+                .then(response => {
+                    alert('Story removed successfully.');
+                    // Reload page
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while removing the story.');
+                    showHome();
                 });
         }
 
@@ -228,13 +247,21 @@
                     document.getElementById('header').innerHTML = '<h1>My Stories</h1>';
                     document.getElementById('content').innerHTML = html;
 
-                    // Add click event listeners to each story link
                     const storyLinks = document.querySelectorAll('.story-box');
                     storyLinks.forEach(link => {
                         link.addEventListener('click', (event) => {
                             event.preventDefault();
                             const storyId = link.getAttribute('href').split('/').pop();
                             showStory(storyId);
+                        });
+                    });
+
+                    const closeButton = document.querySelectorAll('.close-btn');
+                    closeButton.forEach(button => {
+                        button.addEventListener('click', (event) => {
+                            event.preventDefault();
+                            const storyId = button.parentElement.getAttribute('href').split('/').pop();
+                            removeStory(storyId);
                         });
                     });
                 });
@@ -249,13 +276,72 @@
                 });
         }
 
-        function moveLeft() {
-            // Implement the logic to move left
+
+        function addStarRatingListeners(storyId) {
+            const stars = document.querySelectorAll('#starRating .fa-star');
+            stars.forEach(star => {
+                star.addEventListener('mouseover', () => {
+                    const value = star.getAttribute('data-value');
+                    stars.forEach(s => {
+                        if (s.getAttribute('data-value') <= value) {
+                            s.classList.remove('far');
+                            s.classList.add('fas');
+                        } else {
+                            s.classList.remove('fas');
+                            s.classList.add('far');
+                        }
+                    });
+                });
+
+                star.addEventListener('click', () => {
+                    const user = '<%= user %>';
+                    if (!user) {
+                        alert('Please log in to rate the story.');
+                        return;
+                    }
+
+                    const value = star.getAttribute('data-value');
+                    // Here you can add code to save the rating to the server
+                    console.log(storyId, value);
+                    fetch(`/rateStory/${storyId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ score: parseInt(value, 10) })
+                    })
+                        .then(response => {
+                            if (response.status === 400) {
+                                alert('You have already rated this story.');
+                                return;
+                            }
+                            stars.forEach(s => {
+                                if (s.getAttribute('data-value') <= value) {
+                                    s.classList.remove('far');
+                                    s.classList.add('fas');
+                                } else {
+                                    s.classList.remove('fas');
+                                    s.classList.add('far');
+                                }
+                            });
+                            alert(`You rated this story ${value} stars!`);
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('An error occurred while rating the story.');
+                            showHome();
+                        });
+                });
+            });
+
+            document.querySelector('.star-rating').addEventListener('mouseleave', () => {
+                stars.forEach(star => {
+                    star.classList.remove('fas');
+                    star.classList.add('far');
+                });
+            });
         }
 
-        function moveRight() {
-            // Implement the logic to move right
-        }
 
         document.addEventListener('DOMContentLoaded', () => {
             const tabs = document.querySelectorAll('nav a[data-tab]');
@@ -263,12 +349,9 @@
             const currentStoryId = localStorage.getItem('currentStoryId');
             const currProfileId = localStorage.getItem('profileId');
 
-
             function showTab(tabName) {
-                // Remove the active class from all tabs
                 tabs.forEach(tab => tab.classList.remove('active-tab'));
 
-                // Ensure we execute the appropriate function for the tab
                 switch (tabName) {
                     case 'home':
                         showHome();
@@ -281,9 +364,6 @@
                         break;
                     case 'create-story':
                         showCreateStory();
-                        break;
-                    case 'settings':
-                        showSettings();
                         break;
                     case 'profile':
                         if (currProfileId) {
@@ -303,28 +383,23 @@
                         showHome();
                 }
 
-                // Add the active class to the selected tab
                 const activeTab = document.querySelector(`nav a[data-tab="${tabName}"]`);
                 if (activeTab) {
                     activeTab.classList.add('active-tab');
                 }
             }
 
-
-            // Render the current tab's content
             showTab(currentTab);
 
-            // Update localStorage and handle tab switching
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
                     const tabName = tab.getAttribute('data-tab');
                     localStorage.setItem('currentTab', tabName);
-                    localStorage.removeItem('currentStoryId'); // Clear the story ID when switching tabs
+                    localStorage.removeItem('currentStoryId');
                     showTab(tabName);
                 });
             });
 
-            // Handle hidden tabs
             const hiddenTabs = ['profile', 'story'];
             hiddenTabs.forEach(tabName => {
                 if (currentTab === tabName) {
