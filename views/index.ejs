@@ -209,6 +209,30 @@
                             showStory(storyId);
                         });
                     });
+
+                    const closeButton = document.querySelectorAll('.close-btn');
+                    closeButton.forEach(button => {
+                        button.addEventListener('click', (event) => {
+                            event.preventDefault();
+                            const storyId = button.parentElement.getAttribute('href').split('/').pop();
+                            removeStory(storyId);
+                        });
+                    });
+                });
+        }
+
+        async function removeStory(storyId) {
+            fetch(`/story/${storyId}`, {
+                method: 'DELETE'
+            })
+                .then(response => {
+                    alert('Story removed successfully.');
+                    // Reload page
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while removing the story.');
                 });
         }
 
@@ -225,6 +249,15 @@
                             event.preventDefault();
                             const storyId = link.getAttribute('href').split('/').pop();
                             showStory(storyId);
+                        });
+                    });
+
+                    const closeButton = document.querySelectorAll('.close-btn');
+                    closeButton.forEach(button => {
+                        button.addEventListener('click', (event) => {
+                            event.preventDefault();
+                            const storyId = button.parentElement.getAttribute('href').split('/').pop();
+                            removeStory(storyId);
                         });
                     });
                 });

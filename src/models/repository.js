@@ -154,4 +154,15 @@ export default class Repository {
             throw error;
         }
     }
+
+    async deleteStory(storyId) {
+        try {
+            const sql = 'DELETE FROM stories WHERE id = ?';
+            const params = [storyId];
+            await execQuery(sql, params);
+        } catch (error) {
+            console.error('Error deleting story:', error);
+            throw error;
+        }
+    }
 }

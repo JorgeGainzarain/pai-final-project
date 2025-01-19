@@ -78,4 +78,8 @@ export default class Service {
     static async editStory(storyId, title, content) {
         return await this.repository.editStory(storyId, title, content);
     }
+
+    static async deleteStory(storyId) {
+        return await this.repository.deleteStory(storyId);
+    }
 }

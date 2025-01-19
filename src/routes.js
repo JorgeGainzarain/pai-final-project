@@ -32,7 +32,11 @@ router.get('/index', async (req, res) =>  {
 });
 
 router.get('/createStory', (req, res) => {
-    res.sendFile(path.join(__dirname, '../views/createStory.ejs'));
+    const user = req.session['user'];
+    if (!user || !user.id) {
+        return res.redirect('/login');
+    }
+    res.render('createStory');
 });
 
 router.get('/story/:id', async (req, res) => {
@@ -40,7 +44,7 @@ router.get('/story/:id', async (req, res) => {
         const story = await Service.getStoryById(req.params.id);
         const user = req.session['user'];
         if (story) {
-            res.render('storyDetails', { story: story, user: user? user : undefined });
+            res.render('storyDetails', { story: story, user: user?? undefined });
         } else {
             res.status(404).send('Story not found');
         }
@@ -49,9 +53,28 @@ router.get('/story/:id', async (req, res) => {
     }
 });
 
+router.delete('/story/:id', async (req, res) => {
+    const user = req.session['user'];
+    if (!user || !user.id) {
+        return res.status(403).send('Forbidden');
+    }
+    const storyId = req.params.id;
+    const story = await Service.getStoryById(storyId);
+    if (user.id !== story.author.id) {
+        return res.status(403).send('Forbidden');
+    }
+    try {
+        await Service.deleteStory(storyId);
+        res.status(200).send('Story deleted');
+    } catch (error) {
+        res.status(500).send('Error deleting story');
+    }
+});
+
 router.get('/showStories', async (req, res) => {
     const stories = await Service.getStories();
-    res.render('showStories', { stories });
+    const user = req.session['user'];
+    res.render('showStories', { stories: stories, user: user?? undefined });
 });
 
 router.get('/myStories', async (req, res) => {
@@ -60,7 +83,7 @@ router.get('/myStories', async (req, res) => {
         return res.redirect('/login');
     }
     const stories = await Service.getStoriesByUser(user.id);
-    res.render('showStories', { stories });
+    res.render('showStories', { stories: stories, user: user?? undefined });
 });
 
 router.post('/createStory', async (req, res) => {
