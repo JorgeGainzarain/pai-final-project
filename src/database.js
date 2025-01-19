@@ -1,14 +1,12 @@
 import {config} from 'dotenv';
 import sqlite3 from 'sqlite3';
 import {open} from 'sqlite';
-import Service from "./models/service.js";
 
 config(); // Load environment variables
 
 let db;
 
 export async function initializeDatabase() {
-    let databaseInitialized = false;
 
     try {
         db = await open({
@@ -47,14 +45,6 @@ export async function initializeDatabase() {
                                                    FOREIGN KEY (user_id) REFERENCES users(id)
             );
         `);
-
-
-        // Check if the default user already exists
-        Service.signup('admin', 'Admin', 'admin').then(() => {
-            console.log('Default user created');
-        }).catch(err => {
-            console.error('Error creating default user:', err);
-        });
 
     } catch (err) {
         console.error('Error setting up the database:', err);

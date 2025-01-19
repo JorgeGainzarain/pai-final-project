@@ -1,6 +1,5 @@
 // src/routes.js
 import express from 'express';
-import Service from './models/service.js';
 const router = express.Router();
 import {AuthController} from "./app/auth/auth.controller.js";
 import {StoryController} from "./app/story/story.controller.js";
