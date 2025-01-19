@@ -3,7 +3,7 @@
     position: absolute;
     top: 0;
     right: 0;
-    height: 95%;
+    height: 90%;
     display: flex;
     align-items: center;
     color: white;
@@ -11,6 +11,11 @@
     cursor: pointer;
     z-index: 1000;
     user-select: none;
+    transition: transform 0.3s ease, border-bottom 0.3s ease, background-color 0.3s ease;
+    border: 2px solid gray;
+    background-color: #555; /* Lighter background color */
+    border-radius: 20px;
+    margin-bottom: 5px;
 }
 
 .user-icon {
@@ -19,30 +24,39 @@
     margin-right: 10px;
 }
 
+.user-name {
+    font-size: 16px;
+    color: #fff;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
 .dropdown {
     display: none;
     position: absolute;
     top: 100%;
     right: 0;
     background-color: #333;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     border-radius: 5px;
     overflow: hidden;
     user-select: none;
+    transition: all 0.3s ease;
 }
 
 .dropdown a {
     display: block;
-    padding: 10px;
+    padding: 10px 15px;
     color: #fff;
     text-decoration: none;
+    transition: background-color 0.3s ease;
 }
 
 .dropdown a:hover {
     background-color: #555;
 }
 
- .user-box.active-tab {
-     border-bottom: 2px solid #4CAF50;
-     transform: translateY(2px);
- }
+.user-box.active-tab {
+    border-bottom: 2px solid #4CAF50;
+    transform: translateY(2px);
+}
